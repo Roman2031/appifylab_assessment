@@ -61,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const Center(
                   child: Text(
                     'The Best Online Learning Platform',
-                    style: TextStyle(color: Colors.white, fontSize: 16.0),
+                    style: TextStyle(color: Colors.yellow, fontSize: 18.0),
                   ),
                 ),
                 const SizedBox(height: 64.0),
@@ -148,8 +148,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     return ElevatedButton(
                       onPressed: state.isSubmitting
                           ? null
-                          : () =>
-                                context.read<LoginBloc>().add(LoginSubmitted()),
+                          : () => context.read<LoginBloc>().add(
+                              LoginSubmitted(context: context, email: _emailcontroller.text, password: _passwordcontroller.text),
+                            ),
                       child: state.isSubmitting
                           ? const SizedBox(
                               width: 24.0,

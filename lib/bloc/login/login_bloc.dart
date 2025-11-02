@@ -1,29 +1,50 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../repository/login_service.dart';
+import '../../screen/calendar/calendar_screen.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc() : super(LoginState());
+  LoginBloc() : super(LoginState()) {
+    on<LoginEvent>(_onOpenArticleUrl);
+  }
 
-  @override
-  Stream<LoginState> mapEventToState(LoginEvent event) async* {
+
+
+Future<void> _onOpenArticleUrl(
+    LoginEvent event,
+    Emitter<LoginState> emit,
+  ) async {
     if (event is EmailChanged) {
-      yield state.copyWith(email: event.email);
+      emit(state.copyWith(email: event.email));
     } else if (event is PasswordChanged) {
-      yield state.copyWith(password: event.password);
+      emit(state.copyWith(password: event.password));
     } else if (event is LoginSubmitted) {
-      yield state.copyWith(isSubmitting: true);
+      emit(state.copyWith(isSubmitting: true));
       try {
-        // Simulate API call (replace with actual authentication logic)
-        await Future.delayed(const Duration(seconds: 2));
-        if (state.email.isEmpty || state.password.isEmpty) {
-          throw Exception('Please fill in all fields');
+        var token = await loginUser(
+          email: event.email,
+          password: event.password,
+        );
+
+        if (token == null) {
+          emit(state.copyWith(isSubmitting: false, error: 'Login failed'));
+          return;
         }
-        // On success, you could emit a success state or navigate
-        yield state.copyWith(isSubmitting: false, error: '');
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('auth_token', token!);
+
+        Navigator.pushReplacement(
+          event.context,
+          MaterialPageRoute(builder: (_) => const CalendarScreen()),
+        );
       } catch (e) {
-        yield state.copyWith(isSubmitting: false, error: e.toString());
+        emit(state.copyWith(isSubmitting: false, error: e.toString()));
       }
     }
   }
