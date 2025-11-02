@@ -5,8 +5,8 @@ import 'package:equatable/equatable.dart';
 part 'event_calendar_event.dart';
 part 'event_calendar_state.dart';
 
-class EventCalendarBloc extends Bloc<EventCalendarEvent, EventCalendarState> {
-  EventCalendarBloc() : super(EventCalendarState.initial()) {
+class CalendarBloc extends Bloc<EventCalendarEvent, EventCalendarState> {
+  CalendarBloc() : super(EventCalendarState.initial()) {
     on<ChangeDateEvent>((event, emit) {
       emit(state.copyWith(selectedDate: event.date));
     });

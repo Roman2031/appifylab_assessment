@@ -2,14 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'bloc/calendar/event_calendar_bloc.dart';
 import 'bloc/login/login_bloc.dart';
 import 'screen/calendar/calendar_screen.dart';
 import 'screen/login_screen.dart';
 
-void main() async {
+Future<String?> getToken() async {
   final prefs = await SharedPreferences.getInstance();
-  var token = await prefs.getString('auth_token');
-  runApp(MyApp(token: token));
+  return prefs.getString('auth_token');
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MyApp(
+    token: await getToken(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -19,7 +26,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      showSemanticsDebugger: false,
+      debugShowCheckedModeBanner: false,
       title: 'Ezycourse',
       theme: ThemeData(
         useMaterial3: true,
@@ -66,9 +73,16 @@ class MyApp extends StatelessWidget {
           side: const BorderSide(color: Colors.white70),
         ),
       ),
-      home: BlocProvider(
-        create: (context) => LoginBloc(),
-        child: token == null ? const LoginScreen(): const CalendarScreen(),
+      home: MultiBlocProvider(
+        providers: [
+          BlocProvider<LoginBloc>(
+            create: (context) => LoginBloc(),
+          ),
+          BlocProvider<CalendarBloc>(
+            create: (context) => CalendarBloc(),
+          ),
+        ],
+        child: token == null ? const LoginScreen() : const CalendarScreen(),
       ),
     );
   }

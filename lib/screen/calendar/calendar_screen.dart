@@ -16,16 +16,10 @@ class _EventCalendarPageState extends State<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => EventCalendarBloc(),
+      create: (_) => CalendarBloc(),
       child: Scaffold(
         backgroundColor: const Color(0xFFF6F8FC),
         appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
-            onPressed: () {},
-          ),
           centerTitle: true,
           title: const Text(
             'Event Calender',
