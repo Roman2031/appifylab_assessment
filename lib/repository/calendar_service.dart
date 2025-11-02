@@ -1,13 +1,12 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../bloc/utilities/global.dart';
+import '../model/calendar_model.dart';
 
 class CalendarService {
-  Future<void> fetchCalendarData() async {
-
+  Future<List<AppointmentModel>> fetchCalendarData({required int pageNumber}) async {
     final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('auth_token', token!);
+    var token = await prefs.getString('auth_token');
     final dio = Dio(
       BaseOptions(
         connectTimeout: Duration(milliseconds: 5000),
@@ -16,22 +15,24 @@ class CalendarService {
         headers: {'Authorization': 'Bearer $token!'},
       ),
     );
+    try {
+      var url = '$baseUrl/student/order/getMyEventList-calender?month_diff=$pageNumber';
+      Response response = await dio.get(Uri.encodeFull(url));
 
-    // var dataParam = jsonEncode({'email': email, 'password': password});
-    // try {
-    //   var url = '${baseUrl}student/auth/login';
-    //   Response response = await dio.post(Uri.encodeFull(url), data: dataParam);
+      if (response.statusCode == 200) {
+        var result = response.data as List;
+        List<AppointmentModel> listData = result
+            .map((tagJson) => AppointmentModel.fromJson(tagJson))
+            .toList();
 
-    //   if (response.statusCode == 200) {
-    //     // Save token
-    //     final token = response.data['token'];
-    //     final prefs = await SharedPreferences.getInstance();
-    //     await prefs.setString('auth_token', token);
-
-    //     print('Login successful! Token saved : $token');
-    //   }
-    // } catch (e) {
-    //   throw Exception('Failed to login: ${e.toString()}');
-    // }
+        return listData;
+      } else {
+        throw Exception(
+          'Failed to fetch calendar data: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch calendar data: $e');
+    }
   }
 }

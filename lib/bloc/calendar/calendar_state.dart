@@ -1,28 +1,21 @@
-import 'package:equatable/equatable.dart';
 
-class CalendarState extends Equatable {
-  final DateTime selectedDay;
-  final DateTime focusedDay;
-  final Map<DateTime, List<String>> events;
+part of 'calendar_bloc.dart';
 
-  const CalendarState({
-    required this.selectedDay,
-    required this.focusedDay,
-    required this.events,
-  });
+abstract class CalendarState extends Equatable {
+  const CalendarState();
+  
+  @override
+  List<Object> get props => [];
+}
 
-  CalendarState copyWith({
-    DateTime? selectedDay,
-    DateTime? focusedDay,
-    Map<DateTime, List<String>>? events,
-  }) {
-    return CalendarState(
-      selectedDay: selectedDay ?? this.selectedDay,
-      focusedDay: focusedDay ?? this.focusedDay,
-      events: events ?? this.events,
-    );
-  }
+class CalendarInitial extends CalendarState {}
+class CalenderLoading extends CalendarState {}
+class CalenderLoaded extends CalendarState {}
+class CalenderError extends CalendarState {
+   final String message;
+
+  CalenderError(this.message);
 
   @override
-  List<Object?> get props => [selectedDay, focusedDay, events];
+  List<Object> get props => [message];
 }

@@ -34,9 +34,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('auth_token', token);
 
-        Navigator.pushReplacement(
+        Navigator.push(
           event.context,
-          MaterialPageRoute(builder: (_) => const CalendarScreen()),
+          MaterialPageRoute(builder: (_) => CalendarScreen(pageNumber: 0)),
         );
       } catch (e) {
         emit(state.copyWith(isSubmitting: false, error: e.toString()));

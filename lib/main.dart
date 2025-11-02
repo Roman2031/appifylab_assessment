@@ -4,13 +4,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'bloc/calendar/calendar_bloc.dart';
 import 'bloc/login/login_bloc.dart';
-import 'bloc/utilities/global.dart';
+import 'repository/calendar_service.dart';
 import 'screen/calendar/calendar_screen.dart';
 import 'screen/login_screen.dart';
 
 Future<String?> getToken() async {
   final prefs = await SharedPreferences.getInstance();
-  token = prefs.getString('auth_token');
   return prefs.getString('auth_token');
 }
 
@@ -81,10 +80,10 @@ class MyApp extends StatelessWidget {
             create: (context) => LoginBloc(),
           ),
           BlocProvider<CalendarBloc>(
-            create: (context) => CalendarBloc(),
+            create: (context) => CalendarBloc(CalendarService()),
           ),
         ],
-        child: token == null ? const LoginScreen() : const CalendarScreen(),
+        child: token == null ? const LoginScreen() : CalendarScreen(pageNumber: 0),
       ),
     );
   }
