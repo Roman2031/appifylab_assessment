@@ -1,57 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:table_calendar/table_calendar.dart';
 
-import '../../bloc/calendar/event_calendar_bloc.dart';
-import 'calendar_card.dart';
-import 'event_tile.dart';
+import '../../bloc/calendar/calendar_bloc.dart';
+import '../../bloc/calendar/calendar_event.dart';
+import '../../bloc/calendar/calendar_state.dart';
 
-class CalendarScreen extends StatefulWidget {
+class CalendarScreen extends StatelessWidget {
   const CalendarScreen({super.key});
 
-  @override
-  State<CalendarScreen> createState() => _EventCalendarPageState();
-}
-
-class _EventCalendarPageState extends State<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => CalendarBloc(),
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF6F8FC),
-        appBar: AppBar(
-          centerTitle: true,
-          title: const Text(
-            'Event Calender',
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
-          ),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              const CalendarCard(),
-              const SizedBox(height: 16),
-              Expanded(
-                child: ListView(
-                  children: const [
-                    EventTile(
-                      time: '01:10 PM - 02:00 PM',
-                      title: 'cus',
-                      color: Color(0xFF5B6EF5),
-                    ),
-                    SizedBox(height: 8),
-                    EventTile(
-                      time: '04:00 PM - 05:00 PM',
-                      title: 'custom virtual event - 2025 : A ling nam...',
-                      color: Color(0xFF5B6EF5),
-                    ),
-                  ],
+      child: BlocBuilder<CalendarBloc, CalendarState>(
+        builder: (context, state) {
+          final bloc = context.read<CalendarBloc>();
+          return Scaffold(
+            appBar: AppBar(title: Center(child: const Text('Event Calendar'))),
+            body: Column(
+              children: [
+                TableCalendar(
+                  headerStyle: const HeaderStyle(
+                    formatButtonVisible: false,
+                    titleCentered: true,                    
+                  ),
+                  onDaySelected: (selectedDay, focusedDay) {
+                    bloc.add(AddEvent(
+                      date: selectedDay,
+                      title: 'New Event',
+                      description: 'Event Description',
+                      ));
+                  },
+                  firstDay: DateTime.utc(2010, 10, 16),
+                  lastDay: DateTime.utc(2030, 3, 14),
+                  focusedDay: DateTime.now(),
                 ),
-              ),
-            ],
-          ),
-        ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

@@ -7,11 +7,6 @@ Future<String?> loginUser({
   required String email,
   required String password,
 }) async {
-  //  {
-  //   "type": "bearer",
-  //   "token": "MTI4NTQ4.rHulAeMgz1bWnuzzOG6ansaG-2GK7_6j7XMVe3hLHZRgVhpEHD62Ag_m9ttr"
-  // }
-
   String? token;
   final dio = Dio(
     BaseOptions(

@@ -6,17 +6,14 @@ import '../bloc/utilities/global.dart';
 class CalendarService {
   Future<void> fetchCalendarData() async {
 
-    //  {
-    //   "type": "bearer",
-    //   "token": "MTI4NTQ4.rHulAeMgz1bWnuzzOG6ansaG-2GK7_6j7XMVe3hLHZRgVhpEHD62Ag_m9ttr"
-    // }
-
+    final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('auth_token', token!);
     final dio = Dio(
       BaseOptions(
         connectTimeout: Duration(milliseconds: 5000),
         receiveTimeout: Duration(milliseconds: 3000),
         contentType: Headers.jsonContentType,
-        headers: {'Authorization': 'Bearer $token'},
+        headers: {'Authorization': 'Bearer $token!'},
       ),
     );
 

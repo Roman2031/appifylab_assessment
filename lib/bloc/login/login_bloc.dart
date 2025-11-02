@@ -10,15 +10,10 @@ part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc() : super(LoginState()) {
-    on<LoginEvent>(_onOpenArticleUrl);
+    on<LoginEvent>(_onLoginEvent);
   }
 
-
-
-Future<void> _onOpenArticleUrl(
-    LoginEvent event,
-    Emitter<LoginState> emit,
-  ) async {
+  Future<void> _onLoginEvent(LoginEvent event, Emitter<LoginState> emit) async {
     if (event is EmailChanged) {
       emit(state.copyWith(email: event.email));
     } else if (event is PasswordChanged) {
@@ -37,7 +32,7 @@ Future<void> _onOpenArticleUrl(
         }
 
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('auth_token', token!);
+        await prefs.setString('auth_token', token);
 
         Navigator.pushReplacement(
           event.context,
